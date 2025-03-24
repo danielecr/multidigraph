@@ -1,9 +1,6 @@
-use std::fmt::Display;
-use std::hash::Hash;
 
 pub mod adjac;
 pub mod multidigraph;
-// pub mod multidigraphmap;
 
 #[cfg(test)]
 mod tests {
