@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 petgraph = "0.7.1"
 fixedbitset = "0.5.7"
+serde = { version = "1.0.219", features = ["derive"]}
+## serde_json = { version = "1.0.140", features = ["default"] }

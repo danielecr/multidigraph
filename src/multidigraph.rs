@@ -1,16 +1,42 @@
 use petgraph::Graph;
 use petgraph::graph::NodeIndex;
+use serde::Serialize;
 use std::{collections::HashMap, hash::Hash};
 
 use crate::adjac::{Adjac, MyDAG};
 
-pub struct NodePath<T: PartialOrd + Clone + std::fmt::Display> {
-    node: T,
-    edges: Vec<T>,
+/// Trait for NodePath, the argument of Multidigraph.add_paths
+pub trait NodePathTrait<T> where T: PartialOrd + Clone + std::fmt::Display + Eq + Hash {
+    fn new(node: T, edges: Vec<T>) -> Self;
+    fn get_node(&self) -> T;
+    fn get_edges(&self) -> Vec<T>;
 }
 
-impl <T: PartialOrd + Clone + std::fmt::Display> NodePath<T> {
-    pub fn new(node: T, edges: Vec<T>) -> Self {
+#[derive(Serialize)]
+pub struct NodePath<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash> {
+    pub node: T,
+    pub edges: Vec<T>,
+}
+
+impl<T> NodePathTrait<T> for NodePath<T> where T: PartialOrd + Clone + std::fmt::Display + Eq + Hash {
+    fn new(node: T, edges: Vec<T>) -> Self {
+        Self {
+            node,
+            edges,
+        }
+    }
+
+    fn get_node(&self) -> T {
+        self.node.clone()
+    }
+
+    fn get_edges(&self) -> Vec<T> {
+        self.edges.clone()
+    }
+}
+
+impl <T: PartialOrd + Clone + std::fmt::Display + Eq + Hash> NodePath<T> {
+    pub fn new(node: T, edges: Vec<T>) -> NodePath<T> {
         Self {
             node,
             edges,
@@ -28,8 +54,8 @@ pub struct Multidigraph<T> where T: PartialOrd + Clone + Eq + Hash  {
 
 impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
 
-    pub fn new() -> Self {
-        Self {
+    pub fn new() -> Multidigraph<T> {
+        Multidigraph {
             graph: Graph::<T,()>::new(),
             nodes: HashMap::<T,NodeIndex>::new(),
             adjac: None,
@@ -38,13 +64,13 @@ impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
         }
     }
 
-    pub fn add_paths(&mut self, node_path: Vec<NodePath<T>>) {
+    pub fn add_paths<'a>(&mut self, node_path: Vec<&'a impl NodePathTrait<T>>) {
         for node in node_path.iter() {
             // check if node is already in the graph
-            if self.nodes.contains_key(&node.node) {
+            if self.nodes.contains_key(&node.get_node()) {
                 // if it is, add the edges to the graph
-                let node_i = *self.nodes.get(&node.node).unwrap();
-                for edge in node.edges.iter() {
+                let node_i = *self.nodes.get(&node.get_node()).unwrap();
+                for edge in node.get_edges().iter() {
                     // check if edge is already in the graph
                     if self.nodes.contains_key(edge) {
                         // if it is, add an edge between NodePath.node and edge
@@ -60,10 +86,10 @@ impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
                 }
                 continue;
             }
-            let node_i = self.graph.add_node(node.node.clone());
-            self.nodes.insert(node.node.clone(), node_i);
+            let node_i = self.graph.add_node(node.get_node());
+            self.nodes.insert(node.get_node().clone(), node_i);
             // fill the edges
-            for edge in node.edges.iter() {
+            for edge in node.get_edges().iter() {
                 // check if edge is already in the graph
                 if self.nodes.contains_key(edge) {
                     // if it is, add an edge between NodePath.node and edge
