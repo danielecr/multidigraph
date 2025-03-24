@@ -6,10 +6,10 @@ description = "A simple library for extraction multi digraph from a Vec of Paths
 redme = "README.md"
 homepage = "https://github.com/danielecr/multidigraph"
 repository = "https://github.com/danielecr/multidigraph"
-license = "GPL2"
+license = "GPL-2.0"
 license-file = "LICENSE"
 keywords = ["digraph"]
-categories = ["graph utility"]
+categories = ["mathematics"]
 
 [dependencies]
 petgraph = "0.7.1"
