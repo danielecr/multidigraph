@@ -1,10 +1,19 @@
 [package]
 name = "multidigraph"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 petgraph = "0.7.1"
 fixedbitset = "0.5.7"
 serde = { version = "1.0.219", features = ["derive"]}
-## serde_json = { version = "1.0.140", features = ["default"] }
+
+[package]
+description = "A simple library for extraction multi digraph from a Vec of Paths"
+redme = "README.md"
+homepage = "https://github.com/danielecr/multidigraph"
+repository = "https://github.com/danielecr/multidigraph"
+license = "GPL2"
+license-file = "LICENSE"
+keywords = ["digraph"]
+categories = ["graph utility"]
