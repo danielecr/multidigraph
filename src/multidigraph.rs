@@ -18,7 +18,7 @@ impl <T: PartialOrd + Clone + std::fmt::Display> NodePath<T> {
     }
 }
 
-pub struct Multidigraph<T> where T: PartialOrd + Clone + Eq + Hash + std::slice::SliceIndex<[T]> {
+pub struct Multidigraph<T> where T: PartialOrd + Clone + Eq + Hash  {
     pub graph: Graph<T,()>,
     pub nodes: HashMap<T,NodeIndex>,
     adjac: Option<Adjac<T>>,
@@ -26,7 +26,7 @@ pub struct Multidigraph<T> where T: PartialOrd + Clone + Eq + Hash + std::slice:
     pub need_remove: Option<HashMap<T,Vec<T>>>,
 }
 
-impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash + std::slice::SliceIndex<[T]>> Multidigraph<T> {
+impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
 
     pub fn new() -> Self {
         Self {
@@ -102,5 +102,9 @@ impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash + std::slice::SliceIn
 
     pub fn print_internal(&self) {
         self.adjac.as_ref().unwrap().printit();
+    }
+
+    pub fn hu_connected_dags(&self) -> Vec<crate::adjac::HuDAG<T>>{
+        self.adjac.as_ref().unwrap().hu_connected_dags()
     }
 }

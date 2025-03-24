@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use petgraph::graph::Graph;
 use petgraph::graph::Node;
 use fixedbitset::FixedBitSet;
@@ -17,7 +19,13 @@ pub enum MyDAG {
   Single(usize),
 }
 
-impl<T> Adjac<T> where T: PartialOrd + Clone {
+#[derive(Debug, Clone)]
+pub enum HuDAG<T> {
+  Path(Vec<(T,T)>),
+  Single(T),
+}
+
+impl<T> Adjac<T> where T: PartialOrd + Clone + Display{
 
   pub fn new_from_graph(g: &Graph<T,()>) -> Self {
     let size = g.node_count();
@@ -172,7 +180,40 @@ impl<T> Adjac<T> where T: PartialOrd + Clone {
     
     sub_dags
   }
-  
+
+  fn to_human(&self, md: MyDAG) -> HuDAG<T> {
+    match md {
+      MyDAG::Path(p) => {
+        let mut v = Vec::new();
+        for (from, to) in p {
+          v.push((self.rn[from].weight.clone(), self.rn[to].weight.clone()));
+        }
+        HuDAG::Path(v)
+      },
+      MyDAG::Single(a) => HuDAG::Single(self.rn[a].weight.clone()),
+    }
+  }
+
+  pub fn hu_connected_dags(&self) -> Vec<HuDAG<T>> {
+    // given the adjacency matrix for each column which has no setted bit
+    // do: dfs(on that node)
+    let startings = self.select_starting_nodes();
+    let mut sub_dags = Vec::new();
+    
+    for node in startings.iter() {
+      let mut visited = vec![false; self.size];
+      let mut dag = Vec::new();
+      self.dfs( *node, &mut visited, &mut dag);
+      if !dag.is_empty() {
+        sub_dags.push(self.to_human(MyDAG::Path(dag)));
+      } else {
+        sub_dags.push(self.to_human(MyDAG::Single(*node)));
+      }
+    }
+    
+    sub_dags
+  }
+
   fn dfs(&self, node: usize, visited: &mut [bool], dag: &mut Vec<(usize, usize)>) {
     let len = self.getsize();
     visited[node] = true;
