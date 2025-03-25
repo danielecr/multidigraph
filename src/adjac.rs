@@ -214,6 +214,26 @@ impl<T> Adjac<T> where T: PartialOrd + Clone + Display{
     sub_dags
   }
 
+  pub fn dot_notation(&self) -> String {
+    let hu = self.hu_connected_dags();
+    let mut s = String::new();
+    s.push_str("digraph G {\n");
+    for h in hu.iter() {
+      match h {
+        HuDAG::Path(p) => {
+          for (from, to) in p {
+            s.push_str(&format!("  {} -> {};\n", from, to));
+          }
+        },
+        HuDAG::Single(a) => {
+          s.push_str(&format!("  {};\n", a));
+        }
+      }
+    }
+    s.push_str("}\n");
+    s
+  }
+
   fn dfs(&self, node: usize, visited: &mut [bool], dag: &mut Vec<(usize, usize)>) {
     let len = self.getsize();
     visited[node] = true;

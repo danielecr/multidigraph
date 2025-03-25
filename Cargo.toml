@@ -1,6 +1,6 @@
 [package]
 name = "multidigraph"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A simple library for extraction multi digraph from a Vec of Paths"
 redme = "README.md"

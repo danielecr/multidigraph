@@ -32,6 +32,7 @@ Where T: PartialOrd + Clone + std::fmt::Display
     println!("{:?}", c_dag);
     let h_dag = agraph.hu_connected_dags();
     println!("{:?}", h_dag);
+    println!("{}", agraph.dot_notation());
 ```
 
 prints:
@@ -40,6 +41,18 @@ prints:
 
 Some([Path([(8, 7), (7, 6), (6, 5), (5, 4), (4, 3), (3, 0), (0, 1), (1, 2), (0, 2)]), Single(9)])
 [Path([("9", "8"), ("8", "7"), ("7", "6"), ("6", "5"), ("5", "4"), ("4", "1"), ("1", "2"), ("2", "3"), ("1", "3")]), Single("X")]
+digraph G {
+  9 -> 8;
+  8 -> 7;
+  7 -> 6;
+  6 -> 5;
+  5 -> 4;
+  4 -> 1;
+  1 -> 2;
+  2 -> 3;
+  1 -> 3;
+  X;
+}
 ~~~
 
 hu_connected_dags() stands for HUman readable / ready

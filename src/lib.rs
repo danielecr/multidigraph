@@ -53,6 +53,7 @@ mod tests {
         println!("{:?}", c_dag);
         let h_dag = agraph.hu_connected_dags();
         println!("{:?}", h_dag);
+        println!("{}", agraph.dot_notation());
     }
 
     /*

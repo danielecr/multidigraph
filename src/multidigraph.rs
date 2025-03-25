@@ -133,4 +133,8 @@ impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
     pub fn hu_connected_dags(&self) -> Vec<crate::adjac::HuDAG<T>>{
         self.adjac.as_ref().unwrap().hu_connected_dags()
     }
+
+    pub fn dot_notation(&self) -> String {
+        self.adjac.as_ref().unwrap().dot_notation()
+    }
 }
