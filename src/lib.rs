@@ -1,9 +1,12 @@
 
 pub mod adjac;
 pub mod multidigraph;
+pub mod dotutils;
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     //use crate::multidigraph::{FromNodePath, IntoNodePath};
     use super::*;
     use multidigraph::NodePath;
@@ -54,6 +57,14 @@ mod tests {
         let h_dag = agraph.hu_connected_dags();
         println!("{:?}", h_dag);
         println!("{}", agraph.dot_notation());
+        let nlist = agraph.node_list();
+        println!("{}", agraph.node_list().join(", "));
+        let clu = agraph.cluster_by_starting_nodes();
+
+        let mut du = dotutils::Dotutils::new(h_dag, nlist, clu);
+        du.add_node_attribute("1", "color", "red");
+        println!("{}", du.dot_notation_augmented(true));
+        println!("{:?}", agraph.cluster_by_starting_nodes());
     }
 
     /*

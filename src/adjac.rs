@@ -5,6 +5,8 @@ use petgraph::graph::Node;
 use fixedbitset::FixedBitSet;
 use petgraph::visit::EdgeRef;
 
+use crate::dotutils::Cluster;
+
 #[derive(Debug)]
 pub struct Adjac<T> where 
   T: PartialOrd + Clone {
@@ -133,6 +135,25 @@ impl<T> Adjac<T> where T: PartialOrd + Clone + Display{
     }
     v
   }
+
+  pub fn starting_nodes(&self) -> Vec<T> {
+    self.select_starting_nodes().iter().map(|i| self.rn[*i].weight.clone()).collect()
+  }
+
+  pub fn cluster_by_starting_nodes(&self) -> Vec<Cluster> {
+    let startings = self.select_starting_nodes();
+    let mut v = vec![];
+    for node in startings.iter() {
+      let mut visited = vec![false; self.size];
+      let mut dag = Vec::new();
+      self.dfs( *node, &mut visited, &mut dag);
+      //v.push(dag.iter().map(|(from, to)| self.rn[*from].weight.clone()).collect());
+      let clu = Cluster::new(format!("cluster_{}", self.rn[*node].weight.clone()), 
+      dag.iter().map(|(_from, to)| format!("{}", self.rn[*to].weight)).collect());
+      v.push(clu);
+    }
+    v
+  }
   
   /// given a list of path, returns the list of path which contains node
   pub fn path_including_node(&self, dags: &Vec<MyDAG>, node: &T) -> Vec<Vec<(T,Option<T>)>> {
@@ -232,6 +253,30 @@ impl<T> Adjac<T> where T: PartialOrd + Clone + Display{
     }
     s.push_str("}\n");
     s
+  }
+
+  pub fn dot_notation_augmented(&self) -> String {
+    let hu = self.hu_connected_dags();
+    let mut s = String::new();
+    s.push_str("digraph G {\n");
+    for h in hu.iter() {
+      match h {
+        HuDAG::Path(p) => {
+          for (from, to) in p {
+            s.push_str(&format!("  {} -> {};\n", from, to));
+          }
+        },
+        HuDAG::Single(a) => {
+          s.push_str(&format!("  {};\n", a));
+        }
+      }
+    }
+    s.push_str("}\n");
+    s
+  }
+
+  pub fn node_list(&self) -> Vec<T> {
+    self.rn.iter().map(|n| n.weight.clone()).collect()
   }
 
   fn dfs(&self, node: usize, visited: &mut [bool], dag: &mut Vec<(usize, usize)>) {

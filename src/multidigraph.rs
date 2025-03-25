@@ -3,7 +3,7 @@ use petgraph::graph::NodeIndex;
 use serde::Serialize;
 use std::{collections::HashMap, hash::Hash};
 
-use crate::adjac::{Adjac, MyDAG};
+use crate::{adjac::{Adjac, MyDAG}, dotutils::Cluster};
 
 /// Trait for NodePath, the argument of Multidigraph.add_paths
 pub trait NodePathTrait<T> where T: PartialOrd + Clone + std::fmt::Display + Eq + Hash {
@@ -137,4 +137,21 @@ impl<T: PartialOrd + Clone + std::fmt::Display + Eq + Hash > Multidigraph<T> {
     pub fn dot_notation(&self) -> String {
         self.adjac.as_ref().unwrap().dot_notation()
     }
+
+    pub fn dot_notation_augmented(&self) -> String {
+        self.adjac.as_ref().unwrap().dot_notation_augmented()
+    }
+
+    pub fn node_list(&self) -> Vec<T> {
+        self.adjac.as_ref().unwrap().node_list()
+    }
+
+    pub fn starting_nodes(&self) -> Vec<T> {
+        self.adjac.as_ref().unwrap().starting_nodes()
+    }
+
+    pub fn cluster_by_starting_nodes(&self) -> Vec<Cluster> {
+        self.adjac.as_ref().unwrap().cluster_by_starting_nodes()
+    }
+
 }
