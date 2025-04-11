@@ -1,4 +1,4 @@
-https://github.com/danielecr/multigraph/actions/workflows/rust.yml/badge.svg
+![complie](https://github.com/danielecr/multigraph/actions/workflows/rust.yml/badge.svg)
 
 # Multidigraph
 
