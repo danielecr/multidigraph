@@ -1,3 +1,5 @@
+https://github.com/danielecr/multigraph/actions/workflows/rust.yml/badge.svg
+
 # Multidigraph
 
 Calc multidigraph given an array of Multidigraph::NodePath<T>
